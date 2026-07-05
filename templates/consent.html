@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Consent Management — TruthGuard AI</title>
+  <meta name="description" content="Manage content-sharing consent requests and protect your digital identity with TruthGuard AI."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body class="page-body">
+
+<nav class="navbar scrolled">
+  <div class="nav-container">
+    <a href="/" class="nav-logo"><span class="logo-shield">🛡</span><span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+      <li><a href="/detect" class="nav-link">Detect</a></li>
+      <li><a href="/news" class="nav-link">Fake News</a></li>
+      <li><a href="/verify" class="nav-link">ID Verify</a></li>
+      <li><a href="/consent" class="nav-link active">Consent</a></li>
+      <li><a href="/report" class="nav-link">Reports</a></li>
+    </ul>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="container">
+    <div class="page-header">
+      <h1>🔐 Consent Management</h1>
+      <p>Request, manage, and audit content-sharing permissions between users</p>
+    </div>
+
+    <div class="consent-grid">
+      <!-- New Request form -->
+      <div class="panel">
+        <h3 class="panel-title">New Consent Request</h3>
+        <div class="input-group">
+          <label class="input-label">Content Owner <span class="required">*</span></label>
+          <input type="text" id="ownerInput" class="text-input" placeholder="owner_username"/>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Requester <span class="required">*</span></label>
+          <input type="text" id="requesterInput" class="text-input" placeholder="requester_username"/>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Content Description</label>
+          <input type="text" id="contentInput" class="text-input" placeholder="Profile photo used in campaign post"/>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Purpose</label>
+          <textarea id="purposeInput" class="text-area" rows="3" placeholder="Describe why you need this content…"></textarea>
+        </div>
+        <button class="btn btn-primary btn-wide" onclick="createConsentRequest()">📨 Send Consent Request</button>
+        <div id="newConsentResult" style="margin-top:1rem"></div>
+      </div>
+
+      <!-- Respond to request -->
+      <div class="panel">
+        <h3 class="panel-title">Respond to Request</h3>
+        <div class="input-group">
+          <label class="input-label">Request ID</label>
+          <input type="text" id="respondIdInput" class="text-input" placeholder="e.g. A3F89B21"/>
+        </div>
+        <div class="respond-btns">
+          <button class="btn btn-success" onclick="respondConsent('approve')">✅ Approve</button>
+          <button class="btn btn-danger"  onclick="respondConsent('deny')">❌ Deny</button>
+        </div>
+        <div id="respondResult" style="margin-top:1rem"></div>
+      </div>
+    </div>
+
+    <!-- Existing records -->
+    <div class="section-header" style="margin-top:3rem">
+      <h2 class="section-title">Consent Records</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table" id="consentTable">
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Owner</th>
+            <th>Requester</th>
+            <th>Content</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="consentTbody">
+          {% for r in records %}
+          <tr>
+            <td><code class="monospace">{{ r.request_id }}</code></td>
+            <td>{{ r.owner }}</td>
+            <td>{{ r.requester }}</td>
+            <td class="truncate">{{ r.content[:40] }}…</td>
+            <td><span class="status-badge status-{{ r.status.lower() }}">{{ r.status }}</span></td>
+            <td>{{ r.created_at[:10] }}</td>
+            <td>
+              {% if r.status == 'PENDING' %}
+              <button class="mini-btn btn-success" onclick="quickRespond('{{ r.request_id }}','approve')">✅</button>
+              <button class="mini-btn btn-danger"  onclick="quickRespond('{{ r.request_id }}','deny')">❌</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" class="empty-cell">No consent records yet. Create one above.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  async function createConsentRequest() {
+    const owner     = document.getElementById('ownerInput').value.trim();
+    const requester = document.getElementById('requesterInput').value.trim();
+    const content   = document.getElementById('contentInput').value.trim();
+    const purpose   = document.getElementById('purposeInput').value.trim();
+    if (!owner || !requester) { alert('Owner and requester are required'); return; }
+
+    const res  = await fetch('/api/consent/request', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ owner, requester, content, purpose }),
+    });
+    const data = await res.json();
+    const el   = document.getElementById('newConsentResult');
+    el.innerHTML = `<div class="toast toast-ok">
+      ✅ Consent request created · ID: <strong>${data.request_id}</strong>
+    </div>`;
+    setTimeout(() => location.reload(), 2000);
+  }
+
+  async function respondConsent(action) {
+    const id = document.getElementById('respondIdInput').value.trim();
+    if (!id) { alert('Enter a Request ID'); return; }
+    await doRespond(id, action, 'respondResult');
+    setTimeout(() => location.reload(), 2000);
+  }
+
+  async function quickRespond(id, action) {
+    await doRespond(id, action, null);
+    location.reload();
+  }
+
+  async function doRespond(id, action, resultElId) {
+    const res  = await fetch('/api/consent/respond', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ request_id: id, action }),
+    });
+    const data = await res.json();
+    if (resultElId) {
+      const el = document.getElementById(resultElId);
+      el.innerHTML = `<div class="toast ${data.success ? 'toast-ok' : 'toast-error'}">
+        ${data.message || data.error}</div>`;
+    }
+    return data;
+  }
+</script>
+</body>
+</html>

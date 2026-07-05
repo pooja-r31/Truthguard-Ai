@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TruthGuard AI — Shield Against Deepfakes & Misinformation</title>
+  <meta name="description" content="TruthGuard AI: AI-powered deepfake detection, fake news verification, identity confirmation and consent management for a safer internet." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────────────── -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="/" class="nav-logo">
+      <span class="logo-shield">🛡</span>
+      <span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/" class="nav-link active">Home</a></li>
+      <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+      <li><a href="/detect" class="nav-link">Detect</a></li>
+      <li><a href="/news" class="nav-link">Fake News</a></li>
+      <li><a href="/verify" class="nav-link">ID Verify</a></li>
+      <li><a href="/consent" class="nav-link">Consent</a></li>
+      <li><a href="/report" class="nav-link">Reports</a></li>
+    </ul>
+    <button class="nav-cta" onclick="window.location='/detect'">Analyze Now</button>
+    <button class="hamburger" id="hamburger" onclick="toggleNav()">☰</button>
+  </div>
+</nav>
+
+<!-- ── Hero ───────────────────────────────────────────────────────── -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="grid-overlay"></div>
+    <div class="particle" style="--x:10%;--y:20%;--s:4px;--d:6s"></div>
+    <div class="particle" style="--x:80%;--y:15%;--s:6px;--d:8s"></div>
+    <div class="particle" style="--x:50%;--y:70%;--s:3px;--d:5s"></div>
+    <div class="particle" style="--x:25%;--y:80%;--s:5px;--d:7s"></div>
+    <div class="particle" style="--x:90%;--y:60%;--s:4px;--d:9s"></div>
+    <div class="particle" style="--x:65%;--y:40%;--s:7px;--d:6s"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      AI-Powered Media Intelligence Platform
+    </div>
+    <h1 class="hero-title">
+      Detect <span class="gradient-text">Deepfakes</span> &amp;<br/>
+      Stop <span class="gradient-text">Misinformation</span>
+    </h1>
+    <p class="hero-subtitle">
+      TruthGuard AI combines cutting-edge deep learning, NLP, and facial recognition
+      to protect users from manipulated media, fake news, and identity fraud —
+      building a safer, more trustworthy online world.
+    </p>
+    <div class="hero-actions">
+      <a href="/detect" class="btn btn-primary" id="heroDetectBtn">
+        <span>🔍</span> Start Analysis
+      </a>
+      <a href="/dashboard" class="btn btn-ghost" id="heroDashBtn">
+        <span>📊</span> View Dashboard
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num">{{ stats.total_scans }}</span>
+        <span class="hero-stat-label">Media Scanned</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">{{ stats.deepfakes_found }}</span>
+        <span class="hero-stat-label">Fakes Caught</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">{{ stats.users_verified }}</span>
+        <span class="hero-stat-label">Users Verified</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">94.7%</span>
+        <span class="hero-stat-label">Accuracy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features ───────────────────────────────────────────────────── -->
+<section class="features section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Core Capabilities</span>
+      <h2 class="section-title">Powered by Advanced AI</h2>
+      <p class="section-sub">Four intelligent engines working in unison to protect truth online</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card" onclick="window.location='/detect'" id="featureDeepfake">
+        <div class="feature-icon">🎭</div>
+        <h3>Deepfake Detection</h3>
+        <p>Upload any image or video and our CNN-based forensic pipeline analyzes pixel statistics, frequency artefacts, and EXIF metadata to detect AI-generated or manipulated content.</p>
+        <div class="feature-tags">
+          <span class="tag">CNN Analysis</span>
+          <span class="tag">Forensics</span>
+          <span class="tag">Real-time</span>
+        </div>
+        <span class="feature-arrow">→</span>
+      </div>
+
+      <div class="feature-card" onclick="window.location='/news'" id="featureNews">
+        <div class="feature-icon">📰</div>
+        <h3>Fake News Detection</h3>
+        <p>Our NLP engine analyzes news articles and headlines for sensationalism, credibility signals, misinformation keywords, and source reliability to distinguish fact from fiction.</p>
+        <div class="feature-tags">
+          <span class="tag">NLP</span>
+          <span class="tag">Fact-Check</span>
+          <span class="tag">Sentiment AI</span>
+        </div>
+        <span class="feature-arrow">→</span>
+      </div>
+
+      <div class="feature-card" onclick="window.location='/verify'" id="featureVerify">
+        <div class="feature-icon">🪪</div>
+        <h3>Identity Verification</h3>
+        <p>Multi-factor identity verification combining email validation, behavioral analysis, and AI-powered facial recognition to ensure users are who they claim to be.</p>
+        <div class="feature-tags">
+          <span class="tag">Face Match</span>
+          <span class="tag">Trust Score</span>
+          <span class="tag">2FA Ready</span>
+        </div>
+        <span class="feature-arrow">→</span>
+      </div>
+
+      <div class="feature-card" onclick="window.location='/consent'" id="featureConsent">
+        <div class="feature-icon">🔐</div>
+        <h3>Consent Management</h3>
+        <p>Transparent content-sharing consent system that ensures owners control how their media is used. Full audit trail of every permission granted or denied.</p>
+        <div class="feature-tags">
+          <span class="tag">Privacy</span>
+          <span class="tag">Audit Log</span>
+          <span class="tag">GDPR-Ready</span>
+        </div>
+        <span class="feature-arrow">→</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How It Works ────────────────────────────────────────────────── -->
+<section class="how-it-works section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Process</span>
+      <h2 class="section-title">How TruthGuard Works</h2>
+    </div>
+    <div class="steps-row">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">📤</div>
+        <h4>Submit Content</h4>
+        <p>Upload an image, video, or paste news text / URL</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">🤖</div>
+        <h4>AI Analysis</h4>
+        <p>Multi-signal AI pipeline extracts forensic features</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">📊</div>
+        <h4>Verdict Issued</h4>
+        <p>Confidence score and detailed signal breakdown returned</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <div class="step-icon">✅</div>
+        <h4>Take Action</h4>
+        <p>Block, report, or safely share based on the result</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── About ───────────────────────────────────────────────────────── -->
+<section class="about section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-content">
+        <span class="section-badge">Our Mission</span>
+        <h2>Building a Trustworthy<br/>Digital Future</h2>
+        <p>Social media has transformed how we communicate, but it has also enabled the rapid spread of deepfakes, disinformation, and identity fraud. TruthGuard AI was built to fight back.</p>
+        <p>By combining state-of-the-art deep learning with NLP and facial recognition, we give individuals and organizations the tools to verify, protect, and trust digital content.</p>
+        <div class="about-pillars">
+          <div class="pillar"><span>🔬</span> Research-Backed Detection</div>
+          <div class="pillar"><span>🌐</span> Platform-Agnostic API</div>
+          <div class="pillar"><span>🔒</span> Privacy by Design</div>
+          <div class="pillar"><span>📖</span> Open Audit Trail</div>
+        </div>
+      </div>
+      <div class="about-visual">
+        <div class="ring-outer">
+          <div class="ring-mid">
+            <div class="ring-inner">
+              <span>🛡</span>
+            </div>
+          </div>
+        </div>
+        <div class="orbit-dot" style="--angle:0deg">🎭</div>
+        <div class="orbit-dot" style="--angle:90deg">📰</div>
+        <div class="orbit-dot" style="--angle:180deg">🪪</div>
+        <div class="orbit-dot" style="--angle:270deg">🔐</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-brand">
+      <span class="logo-shield">🛡</span>
+      <span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span>
+    </div>
+    <p class="footer-tagline">Protecting truth in the age of artificial intelligence.</p>
+    <div class="footer-links">
+      <a href="/detect">Detect Media</a>
+      <a href="/news">Fake News</a>
+      <a href="/verify">Verify Identity</a>
+      <a href="/consent">Consent</a>
+      <a href="/dashboard">Dashboard</a>
+    </div>
+    <p class="footer-copy">© 2024 TruthGuard AI. Built to defend digital truth.</p>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  // Scroll-based navbar
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+  });
+  function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+</script>
+</body>
+</html>

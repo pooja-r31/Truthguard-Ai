@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Full Reports — TruthGuard AI</title>
+  <meta name="description" content="Download full analysis reports for all scans performed by TruthGuard AI."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body class="page-body">
+
+<nav class="navbar scrolled">
+  <div class="nav-container">
+    <a href="/" class="nav-logo"><span class="logo-shield">🛡</span><span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+      <li><a href="/detect" class="nav-link">Detect</a></li>
+      <li><a href="/news" class="nav-link">Fake News</a></li>
+      <li><a href="/verify" class="nav-link">ID Verify</a></li>
+      <li><a href="/consent" class="nav-link">Consent</a></li>
+      <li><a href="/report" class="nav-link active">Reports</a></li>
+    </ul>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="container">
+    <div class="page-header">
+      <h1>📋 Scan Reports</h1>
+      <p>Complete audit trail of all TruthGuard AI analyses</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <input type="text" id="filterInput" class="text-input filter-input"
+             placeholder="Search by ID, filename, or type…" oninput="filterTable()"/>
+      <select id="filterResult" class="text-input filter-select" onchange="filterTable()">
+        <option value="">All Results</option>
+        <option value="FAKE">FAKE</option>
+        <option value="REAL">REAL</option>
+      </select>
+      <select id="filterType" class="text-input filter-select" onchange="filterTable()">
+        <option value="">All Types</option>
+        <option value="media">Media</option>
+        <option value="url">URL</option>
+        <option value="news">News</option>
+      </select>
+      <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table" id="reportTable">
+        <thead>
+          <tr>
+            <th>Report ID</th><th>Type</th><th>Content / Source</th>
+            <th>Result</th><th>Confidence</th><th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody id="reportTbody">
+          {% for scan in history %}
+          <tr data-result="{{ scan.result }}" data-type="{{ scan.type }}"
+              data-search="{{ scan.id }} {{ scan.filename }} {{ scan.type }}">
+            <td><code class="monospace">{{ scan.id }}</code></td>
+            <td><span class="type-badge type-{{ scan.type }}">{{ scan.type }}</span></td>
+            <td class="truncate">{{ scan.filename[:55] if scan.filename else '—' }}</td>
+            <td><span class="status-badge status-{{ scan.result.lower() if scan.result else 'unknown' }}">{{ scan.result or '—' }}</span></td>
+            <td>{{ scan.confidence or 0 }}%</td>
+            <td class="timestamp">{{ scan.timestamp[:19].replace('T',' ') if scan.timestamp else '—' }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="empty-cell">No reports yet. <a href="/detect">Start analyzing →</a></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  function filterTable() {
+    const q      = document.getElementById('filterInput').value.toLowerCase();
+    const result = document.getElementById('filterResult').value;
+    const type   = document.getElementById('filterType').value;
+    document.querySelectorAll('#reportTbody tr').forEach(row => {
+      const search  = (row.dataset.search || '').toLowerCase();
+      const rowRes  = row.dataset.result || '';
+      const rowType = row.dataset.type   || '';
+      const show = (!q || search.includes(q))
+                && (!result || rowRes === result)
+                && (!type   || rowType === type);
+      row.style.display = show ? '' : 'none';
+    });
+  }
+
+  function exportCSV() {
+    const rows = [['Report ID','Type','Content','Result','Confidence','Timestamp']];
+    document.querySelectorAll('#reportTbody tr:not([style*="none"])').forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length >= 6) {
+        rows.push([...cells].map(c => '"' + c.textContent.trim() + '"').join(','));
+      }
+    });
+    const blob = new Blob([rows.join('\n')], {type:'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'truthguard_report_' + Date.now() + '.csv';
+    a.click();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Identity Verification — TruthGuard AI</title>
+  <meta name="description" content="Verify user identity with multi-factor AI analysis and facial recognition using TruthGuard AI."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body class="page-body">
+
+<nav class="navbar scrolled">
+  <div class="nav-container">
+    <a href="/" class="nav-logo"><span class="logo-shield">🛡</span><span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+      <li><a href="/detect" class="nav-link">Detect</a></li>
+      <li><a href="/news" class="nav-link">Fake News</a></li>
+      <li><a href="/verify" class="nav-link active">ID Verify</a></li>
+      <li><a href="/consent" class="nav-link">Consent</a></li>
+      <li><a href="/report" class="nav-link">Reports</a></li>
+    </ul>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="container">
+    <div class="page-header">
+      <h1>🪪 Identity Verification</h1>
+      <p>Multi-factor identity analysis with optional facial recognition</p>
+    </div>
+
+    <div class="verify-grid">
+      <!-- Left: Form -->
+      <div class="panel">
+        <h3 class="panel-title">User Information</h3>
+        <div class="input-group">
+          <label class="input-label">Username <span class="required">*</span></label>
+          <input type="text" id="usernameInput" class="text-input" placeholder="john_doe_92"/>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Email Address</label>
+          <input type="email" id="emailInput" class="text-input" placeholder="john@example.com"/>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Verification Method</label>
+          <select id="idTypeSelect" class="text-input">
+            <option value="email">Email Verification</option>
+            <option value="phone">Phone / SMS OTP</option>
+            <option value="government_id">Government ID</option>
+            <option value="social">Social Account Link</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-wide" id="verifyBtn" onclick="verifyUser()">
+          🔐 Verify Identity
+        </button>
+
+        <div class="loading-box" id="loadingUser" style="display:none">
+          <div class="spinner"></div><p>Analyzing identity signals…</p>
+        </div>
+
+        <div id="userResult" style="display:none"></div>
+      </div>
+
+      <!-- Right: Face Verify -->
+      <div class="panel">
+        <h3 class="panel-title">Optional: Facial Recognition</h3>
+        <p class="panel-desc">Use your webcam to add an extra layer of biometric verification.</p>
+
+        <div class="webcam-box" id="webcamBox">
+          <video id="webcamVideo" autoplay playsinline style="display:none;width:100%;border-radius:12px"></video>
+          <canvas id="webcamCanvas" style="display:none"></canvas>
+          <div class="webcam-placeholder" id="webcamPlaceholder">
+            <span>📷</span>
+            <p>Webcam not started</p>
+          </div>
+        </div>
+
+        <div class="webcam-controls">
+          <button class="btn btn-ghost" id="startCamBtn" onclick="startCamera()">📷 Start Camera</button>
+          <button class="btn btn-primary" id="captureFaceBtn" onclick="captureAndVerify()" style="display:none">
+            📸 Capture &amp; Verify
+          </button>
+          <button class="btn btn-ghost" id="stopCamBtn" onclick="stopCamera()" style="display:none">⏹ Stop</button>
+        </div>
+
+        <div class="loading-box" id="loadingFace" style="display:none">
+          <div class="spinner"></div><p>Running facial recognition…</p>
+        </div>
+        <div id="faceResult" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  let stream = null;
+
+  async function verifyUser() {
+    const username = document.getElementById('usernameInput').value.trim();
+    const email    = document.getElementById('emailInput').value.trim();
+    const idType   = document.getElementById('idTypeSelect').value;
+    if (!username) { alert('Username is required'); return; }
+
+    document.getElementById('loadingUser').style.display = 'flex';
+    document.getElementById('userResult').style.display  = 'none';
+
+    const res  = await fetch('/api/verify/user', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ username, email, id_type: idType }),
+    });
+    const data = await res.json();
+    document.getElementById('loadingUser').style.display = 'none';
+
+    const el = document.getElementById('userResult');
+    const ok = data.verified;
+    el.innerHTML = `
+      <div class="verify-result ${ok ? 'verify-ok' : 'verify-fail'}">
+        <div class="verify-icon">${ok ? '✅' : '❌'}</div>
+        <h4>${ok ? 'Identity Verified' : 'Verification Failed'}</h4>
+        <div class="trust-meter">
+          <span class="trust-label">Trust Score</span>
+          <div class="trust-bar"><div class="trust-fill ${data.trust_score > 60 ? 'trust-high' : 'trust-low'}"
+            style="width:${data.trust_score}%"></div></div>
+          <span class="trust-val">${data.trust_score} / 100</span>
+        </div>
+        <div class="trust-level level-${(data.level||'LOW').toLowerCase()}">${data.level || 'UNKNOWN'} TRUST</div>
+        <div class="checks-list">
+          ${Object.entries(data.checks||{}).map(([k,v])=>`
+            <div class="check-row">
+              <span class="check-icon">${v.valid !== false ? '✓' : '✗'}</span>
+              <span class="check-key">${k.replace(/_/g,' ')}</span>
+              <span class="check-score">${v.score || 0}pts</span>
+            </div>`).join('')}
+        </div>
+        ${data.session_token ? `<div class="session-token">Session: ${data.session_token}</div>` : ''}
+        <ul class="recs-list">${(data.recommendations||[]).map(r=>`<li>${r}</li>`).join('')}</ul>
+      </div>`;
+    el.style.display = 'block';
+  }
+
+  async function startCamera() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.getElementById('webcamVideo');
+      video.srcObject = stream;
+      video.style.display = 'block';
+      document.getElementById('webcamPlaceholder').style.display = 'none';
+      document.getElementById('startCamBtn').style.display   = 'none';
+      document.getElementById('captureFaceBtn').style.display = 'inline-block';
+      document.getElementById('stopCamBtn').style.display     = 'inline-block';
+    } catch(e) { alert('Camera access denied: ' + e.message); }
+  }
+
+  function stopCamera() {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    document.getElementById('webcamVideo').style.display    = 'none';
+    document.getElementById('webcamPlaceholder').style.display = 'block';
+    document.getElementById('startCamBtn').style.display    = 'inline-block';
+    document.getElementById('captureFaceBtn').style.display = 'none';
+    document.getElementById('stopCamBtn').style.display     = 'none';
+  }
+
+  async function captureAndVerify() {
+    const video  = document.getElementById('webcamVideo');
+    const canvas = document.getElementById('webcamCanvas');
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const imageB64 = canvas.toDataURL('image/jpeg');
+    const username = document.getElementById('usernameInput').value.trim();
+
+    document.getElementById('loadingFace').style.display = 'flex';
+    document.getElementById('faceResult').style.display  = 'none';
+
+    const res  = await fetch('/api/verify/face', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ image: imageB64, username }),
+    });
+    const data = await res.json();
+    document.getElementById('loadingFace').style.display = 'none';
+
+    const el = document.getElementById('faceResult');
+    el.innerHTML = `
+      <div class="verify-result ${data.verified ? 'verify-ok' : 'verify-fail'}">
+        <div class="verify-icon">${data.verified ? '✅' : '⚠️'}</div>
+        <h4>${data.message}</h4>
+        <div class="face-scores">
+          <div class="face-score-item"><span>Liveness</span><strong>${data.liveness_score}%</strong></div>
+          <div class="face-score-item"><span>Match</span><strong>${data.match_score}%</strong></div>
+          <div class="face-score-item"><span>Spoof</span><strong style="color:${data.spoof_detected?'#ff4444':'#44ff99'}">${data.spoof_detected?'DETECTED':'NONE'}</strong></div>
+          <div class="face-score-item"><span>Quality</span><strong>${data.face_quality}</strong></div>
+        </div>
+      </div>`;
+    el.style.display = 'block';
+  }
+</script>
+</body>
+</html>

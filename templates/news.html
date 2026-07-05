@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Fake News Detector — TruthGuard AI</title>
+  <meta name="description" content="Detect fake news, misinformation and propaganda using TruthGuard AI's NLP-powered analysis engine."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body class="page-body">
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="/" class="nav-logo">
+      <span class="logo-shield">🛡</span>
+      <span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+      <li><a href="/detect" class="nav-link">Detect</a></li>
+      <li><a href="/news" class="nav-link active">Fake News</a></li>
+      <li><a href="/verify" class="nav-link">ID Verify</a></li>
+      <li><a href="/consent" class="nav-link">Consent</a></li>
+      <li><a href="/report" class="nav-link">Reports</a></li>
+    </ul>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="container">
+    <div class="page-header">
+      <h1>📰 Fake News &amp; Misinformation Detector</h1>
+      <p>Paste a headline and/or article body to analyze it for misinformation signals using NLP</p>
+    </div>
+
+    <div class="panel">
+      <div class="input-group">
+        <label class="input-label">News Headline</label>
+        <input type="text" id="headlineInput" class="text-input"
+               placeholder="e.g. Scientists discover miracle cure hiding in kitchen spices"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Article Body <span class="optional">(optional but improves accuracy)</span></label>
+        <textarea id="bodyInput" class="text-area" rows="7"
+                  placeholder="Paste the complete article text here…"></textarea>
+      </div>
+
+      <!-- Example chips -->
+      <div class="example-bar">
+        <span class="example-label">Try sample:</span>
+        <button class="chip-btn" onclick="loadExample('fake')" id="exFake">⚠️ Fake headline</button>
+        <button class="chip-btn" onclick="loadExample('real')" id="exReal">✅ Real headline</button>
+      </div>
+
+      <button class="btn btn-primary" id="analyzeNewsBtn" onclick="analyzeNews()">
+        🔍 Analyze Article
+      </button>
+    </div>
+
+    <div class="loading-box" id="loadingBox" style="display:none">
+      <div class="spinner"></div>
+      <p>NLP analysis in progress…</p>
+    </div>
+
+    <div class="result-card" id="resultCard" style="display:none">
+      <div class="result-header">
+        <div class="verdict-badge" id="verdictBadge"></div>
+        <div class="confidence-bar-wrap">
+          <span class="conf-label">Fake probability</span>
+          <div class="confidence-bar">
+            <div class="confidence-fill" id="confidenceFill"></div>
+          </div>
+          <span class="conf-value" id="confValue"></span>
+        </div>
+      </div>
+      <div class="verdict-label" id="verdictLabel"></div>
+      <p class="result-explanation" id="resultExplanation"></p>
+
+      <h4 class="signals-title">Signal Breakdown</h4>
+      <div class="signals-grid" id="signalsGrid"></div>
+      <div class="recs-box" id="recsBox"></div>
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  const EXAMPLES = {
+    fake: {
+      headline: "SHOCKING: 5G towers secretly spreading COVID-19 — Big Pharma conspiracy EXPOSED!",
+      body: "Scientists have confirmed that 5G radiation activates the COVID virus inside your body. They don't want you to know this! Share before this gets deleted! The deep state has been hiding the truth for years.",
+    },
+    real: {
+      headline: "WHO confirms seasonal flu vaccines remain effective for 2024-25",
+      body: "The World Health Organization has published updated guidelines confirming this season's influenza vaccines provide strong protection against circulating strains. According to the published study in The Lancet, researchers found 78% efficacy in adults over 65.",
+    },
+  };
+
+  function loadExample(type) {
+    document.getElementById('headlineInput').value = EXAMPLES[type].headline;
+    document.getElementById('bodyInput').value     = EXAMPLES[type].body;
+  }
+
+  async function analyzeNews() {
+    const headline = document.getElementById('headlineInput').value.trim();
+    const text     = document.getElementById('bodyInput').value.trim();
+    if (!headline && !text) { alert('Please enter a headline or article body.'); return; }
+
+    document.getElementById('loadingBox').style.display = 'flex';
+    document.getElementById('resultCard').style.display = 'none';
+
+    try {
+      const res  = await fetch('/api/detect/news', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ headline, text }),
+      });
+      const data = await res.json();
+      showResult(data);
+    } catch(e) {
+      document.getElementById('loadingBox').style.display = 'none';
+      alert('Error: ' + e.message);
+    }
+  }
+
+  function showResult(data) {
+    document.getElementById('loadingBox').style.display = 'none';
+    const card   = document.getElementById('resultCard');
+    const isFake = data.result === 'FAKE';
+
+    card.className = 'result-card ' + (isFake ? 'result-fake' : 'result-real');
+
+    document.getElementById('verdictBadge').innerHTML =
+      `<span class="verdict-icon">${isFake ? '⚠️' : '✅'}</span>
+       <span class="verdict-text">${data.details?.label || (isFake ? 'FAKE NEWS' : 'AUTHENTIC')}</span>`;
+
+    const fill = document.getElementById('confidenceFill');
+    fill.style.width = data.confidence + '%';
+    fill.className   = 'confidence-fill ' + (isFake ? 'fill-fake' : 'fill-real');
+    document.getElementById('confValue').textContent = data.confidence + '%';
+
+    document.getElementById('verdictLabel').textContent = data.details?.label || '';
+    document.getElementById('resultExplanation').textContent = data.details?.explanation || '';
+
+    const signals  = data.details?.signals || {};
+    const SIGNAL_NAMES = {
+      sensationalism: '🔥 Sensationalism',
+      credibility:    '📚 Credibility',
+      misinformation: '🚨 Misinformation',
+      sentiment:      '😤 Sentiment',
+      source_quality: '🗞️ Source Quality',
+      writing_quality:'✍️ Writing Quality',
+    };
+    document.getElementById('signalsGrid').innerHTML =
+      Object.entries(signals).map(([k, v]) => `
+        <div class="signal-chip ${v.score > 0.5 ? 'signal-high' : 'signal-low'}">
+          <span class="signal-name">${SIGNAL_NAMES[k] || k}</span>
+          <span class="signal-score">${(v.score*100).toFixed(1)}%</span>
+          ${k === 'sensationalism' && v.clickbait_phrases?.length
+            ? `<div class="signal-detail">Found: ${v.clickbait_phrases.slice(0,3).join(', ')}</div>` : ''}
+          ${k === 'misinformation' && v.matched_keywords?.length
+            ? `<div class="signal-detail">Keywords: ${v.matched_keywords.join(', ')}</div>` : ''}
+          ${k === 'credibility' && v.credibility_signals?.length
+            ? `<div class="signal-detail">Signals: ${v.credibility_signals.slice(0,3).join(', ')}</div>` : ''}
+        </div>`).join('');
+
+    const recs = data.details?.recommendations || [];
+    document.getElementById('recsBox').innerHTML = recs.length
+      ? '<h4>Recommendations</h4><ul>' + recs.map(r=>`<li>${r}</li>`).join('') + '</ul>'
+      : '';
+
+    card.style.display = 'block';
+    card.scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Alpha — Fake News — TruthGuard AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <style>
+    .alpha-banner { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; text-align: center; padding: 8px; font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; }
+    .navbar { top: 32px !important; }
+    .page-main { padding-top: 130px !important; }
+    .alpha-badge { display: inline-block; background: linear-gradient(135deg, #f59e0b, #f97316); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; margin-left: 8px; }
+    .label-panel { background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(245,158,11,0.1)); border: 2px dashed rgba(251,191,36,0.5); border-radius: 16px; padding: 24px; margin-top: 24px; display: none; }
+    .label-panel.visible { display: block; }
+    .label-panel h3 { margin: 0 0 16px; color: #fbbf24; }
+    .label-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+    .label-btn { flex: 1; min-width: 140px; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; border: 2px solid; transition: all 0.3s; text-align: center; }
+    .label-btn-fake { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #ef4444; }
+    .label-btn-fake:hover { background: rgba(239,68,68,0.3); }
+    .label-btn-real { background: rgba(34,197,94,0.15); border-color: #22c55e; color: #22c55e; }
+    .label-btn-real:hover { background: rgba(34,197,94,0.3); }
+    .label-btn.selected { transform: scale(1.05); }
+    .label-btn-fake.selected { background: rgba(239,68,68,0.4); }
+    .label-btn-real.selected { background: rgba(34,197,94,0.4); }
+    .label-notes, .tester-input { width: 100%; padding: 10px; border-radius: 8px; margin-top: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: 'Inter', sans-serif; }
+    .submit-label-btn { margin-top: 16px; width: 100%; padding: 14px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 700; cursor: pointer; border: none; transition: all 0.3s; }
+    .submit-label-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .feedback-result { margin-top: 16px; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; display: none; }
+    .feedback-correct { background: rgba(34,197,94,0.2); border: 1px solid #22c55e; color: #22c55e; }
+    .feedback-incorrect { background: rgba(239,68,68,0.2); border: 1px solid #ef4444; color: #ef4444; }
+  </style>
+</head>
+<body class="page-body">
+<div class="alpha-banner">⚠️ ALPHA BUILD — Manual Labeling Enabled</div>
+<nav class="navbar scrolled"><div class="nav-container">
+  <a href="/" class="nav-logo"><span class="logo-shield">🛡</span><span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span><span class="alpha-badge">ALPHA</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/" class="nav-link">Home</a></li>
+    <li><a href="/detect" class="nav-link">Detect Media</a></li>
+    <li><a href="/news" class="nav-link active">Fake News</a></li>
+    <li><a href="/feedback" class="nav-link">📊 Feedback</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+</div></nav>
+
+<main class="page-main"><div class="container">
+  <div class="page-header">
+    <h1>📰 Alpha — Fake News + Labeling</h1>
+    <p>Paste headline/article → see AI verdict → label as FAKE or REAL</p>
+  </div>
+  <div class="panel">
+    <div class="input-group"><label class="input-label">Headline</label>
+      <input type="text" id="headlineInput" class="text-input" placeholder="e.g. Scientists discover miracle cure..."/></div>
+    <div class="input-group"><label class="input-label">Article Body <span class="optional">(optional)</span></label>
+      <textarea id="bodyInput" class="text-area" rows="7" placeholder="Paste article text…"></textarea></div>
+    <div class="example-bar">
+      <span class="example-label">Try:</span>
+      <button class="chip-btn" onclick="loadExample('fake')">⚠️ Fake</button>
+      <button class="chip-btn" onclick="loadExample('real')">✅ Real</button>
+    </div>
+    <button class="btn btn-primary" onclick="analyzeNews()">🔍 Analyze</button>
+  </div>
+  <div class="loading-box" id="loadingBox" style="display:none"><div class="spinner"></div><p>NLP analysis…</p></div>
+  <div class="result-card" id="resultCard" style="display:none">
+    <div class="result-header"><div class="verdict-badge" id="verdictBadge"></div>
+      <div class="confidence-bar-wrap"><span class="conf-label">Fake probability</span>
+        <div class="confidence-bar"><div class="confidence-fill" id="confidenceFill"></div></div>
+        <span class="conf-value" id="confValue"></span></div></div>
+    <div class="verdict-label" id="verdictLabel"></div>
+    <p class="result-explanation" id="resultExplanation"></p>
+    <h4 class="signals-title">Signal Breakdown</h4>
+    <div class="signals-grid" id="signalsGrid"></div>
+    <div class="recs-box" id="recsBox"></div>
+  </div>
+  <div class="label-panel" id="labelPanel">
+    <h3>🏷️ Was the AI correct?</h3>
+    <p style="color:rgba(255,255,255,0.6);font-size:0.9rem">AI said: <strong id="aiSaidLabel">—</strong></p>
+    <div class="label-btns">
+      <button class="label-btn label-btn-fake" id="labelFakeBtn" onclick="selectLabel('FAKE')">⚠️ It IS Fake</button>
+      <button class="label-btn label-btn-real" id="labelRealBtn" onclick="selectLabel('REAL')">✅ It IS Real</button>
+    </div>
+    <input class="tester-input" id="testerName" placeholder="Your name"/>
+    <textarea class="label-notes" id="labelNotes" placeholder="Optional notes…"></textarea>
+    <button class="submit-label-btn" id="submitLabelBtn" onclick="submitLabel()" disabled>📝 Submit Label</button>
+    <div class="feedback-result" id="feedbackResult"></div>
+  </div>
+</div></main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+let currentScanId=null, selectedLabel=null;
+const EXAMPLES={
+  fake:{headline:"SHOCKING: 5G towers secretly spreading COVID-19 — Big Pharma conspiracy EXPOSED!",
+    body:"They don't want you to know this! 5G causes cancer. Vaccines cause autism. Share before deleted! The deep state and bill gates depopulation agenda. Microchip vaccine inside every dose."},
+  real:{headline:"WHO confirms seasonal flu vaccines remain effective for 2024-25",
+    body:"According to the published study in The Lancet, researchers found 78% efficacy. The peer-reviewed journal Nature confirmed. BBC and Reuters reported the official statement from WHO."}
+};
+function loadExample(t){document.getElementById('headlineInput').value=EXAMPLES[t].headline;document.getElementById('bodyInput').value=EXAMPLES[t].body;}
+async function analyzeNews(){
+  const h=document.getElementById('headlineInput').value.trim(),t=document.getElementById('bodyInput').value.trim();
+  if(!h&&!t){alert('Enter headline or body.');return;}
+  document.getElementById('loadingBox').style.display='flex';
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('labelPanel').classList.remove('visible');
+  try{const r=await fetch('/api/detect/news',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({headline:h,text:t})});
+    const d=await r.json();currentScanId=d.id;showResult(d);
+  }catch(e){document.getElementById('loadingBox').style.display='none';alert(e.message);}
+}
+function showResult(d){
+  document.getElementById('loadingBox').style.display='none';
+  const c=document.getElementById('resultCard'),f=d.result==='FAKE';
+  c.className='result-card '+(f?'result-fake':'result-real');
+  document.getElementById('verdictBadge').innerHTML=`<span class="verdict-icon">${f?'⚠️':'✅'}</span><span class="verdict-text">${d.details?.label||(f?'FAKE NEWS':'AUTHENTIC')}</span>`;
+  const fl=document.getElementById('confidenceFill');fl.style.width=d.confidence+'%';fl.className='confidence-fill '+(f?'fill-fake':'fill-real');
+  document.getElementById('confValue').textContent=d.confidence+'%';
+  document.getElementById('verdictLabel').textContent=d.details?.label||'';
+  document.getElementById('resultExplanation').textContent=d.details?.explanation||'';
+  const sn={'sensationalism':'🔥 Sensationalism','credibility':'📚 Credibility','misinformation':'🚨 Misinformation','sentiment':'😤 Sentiment','source_quality':'🗞️ Source Quality','writing_quality':'✍️ Writing Quality'};
+  const sg=d.details?.signals||{};
+  document.getElementById('signalsGrid').innerHTML=Object.entries(sg).map(([k,v])=>`<div class="signal-chip ${v.score>0.5?'signal-high':'signal-low'}"><span class="signal-name">${sn[k]||k}</span><span class="signal-score">${(v.score*100).toFixed(1)}%</span></div>`).join('');
+  const recs=d.details?.recommendations||[];
+  document.getElementById('recsBox').innerHTML=recs.length?'<h4>Recommendations</h4><ul>'+recs.map(r=>`<li>${r}</li>`).join('')+'</ul>':'';
+  c.style.display='block';
+  document.getElementById('aiSaidLabel').textContent=d.result;
+  document.getElementById('aiSaidLabel').style.color=f?'#ef4444':'#22c55e';
+  document.getElementById('labelPanel').classList.add('visible');
+  selectedLabel=null;document.getElementById('submitLabelBtn').disabled=true;
+  document.getElementById('labelFakeBtn').classList.remove('selected');
+  document.getElementById('labelRealBtn').classList.remove('selected');
+  document.getElementById('feedbackResult').style.display='none';
+  c.scrollIntoView({behavior:'smooth'});
+}
+function selectLabel(l){selectedLabel=l;document.getElementById('labelFakeBtn').classList.toggle('selected',l==='FAKE');document.getElementById('labelRealBtn').classList.toggle('selected',l==='REAL');document.getElementById('submitLabelBtn').disabled=false;}
+async function submitLabel(){
+  if(!currentScanId||!selectedLabel)return;
+  document.getElementById('submitLabelBtn').disabled=true;document.getElementById('submitLabelBtn').textContent='⏳ Submitting...';
+  try{const r=await fetch('/api/feedback/label',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scan_id:currentScanId,human_label:selectedLabel,notes:document.getElementById('labelNotes').value.trim(),tester_name:document.getElementById('testerName').value.trim()||'anonymous'})});
+    const d=await r.json();const fb=document.getElementById('feedbackResult');
+    if(d.is_correct){fb.className='feedback-result feedback-correct';fb.innerHTML=`✅ AI CORRECT! Accuracy: ${d.current_accuracy}% (${d.total_feedback} labels)`;}
+    else{fb.className='feedback-result feedback-incorrect';fb.innerHTML=`❌ AI WRONG — saved. Accuracy: ${d.current_accuracy}% (${d.total_feedback} labels)`;}
+    fb.style.display='block';document.getElementById('submitLabelBtn').textContent='✅ Submitted';
+  }catch(e){alert(e.message);document.getElementById('submitLabelBtn').disabled=false;document.getElementById('submitLabelBtn').textContent='📝 Submit Label';}
+}
+</script>
+</body></html>

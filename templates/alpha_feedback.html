@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Alpha — Feedback Log — TruthGuard AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <style>
+    .alpha-banner { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; text-align: center; padding: 8px; font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; }
+    .navbar { top: 32px !important; }
+    .page-main { padding-top: 130px !important; }
+    .alpha-badge { display: inline-block; background: linear-gradient(135deg, #f59e0b, #f97316); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; margin-left: 8px; }
+    .accuracy-hero { text-align: center; margin-bottom: 32px; }
+    .accuracy-big { font-size: 4rem; font-weight: 900; background: linear-gradient(135deg, #10b981, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 24px 0; }
+    .stat-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; text-align: center; }
+    .stat-card .num { font-size: 2rem; font-weight: 800; color: #fff; }
+    .stat-card .lbl { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 4px; }
+    .fb-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+    .fb-table th { text-align: left; padding: 12px; font-size: 0.8rem; color: rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 1px; }
+    .fb-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; color: rgba(255,255,255,0.8); }
+    .fb-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .badge-correct { background: rgba(34,197,94,0.2); color: #22c55e; padding: 4px 10px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; }
+    .badge-incorrect { background: rgba(239,68,68,0.2); color: #ef4444; padding: 4px 10px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; }
+    .badge-fake { color: #ef4444; font-weight: 600; }
+    .badge-real { color: #22c55e; font-weight: 600; }
+    .export-btn { margin-top: 24px; }
+    .type-breakdown { margin: 16px 0; }
+    .type-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .type-name { font-weight: 600; min-width: 80px; text-transform: capitalize; }
+    .type-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+    .type-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #10b981, #3b82f6); }
+    .type-pct { font-size: 0.85rem; font-weight: 700; min-width: 50px; text-align: right; }
+  </style>
+</head>
+<body class="page-body">
+<div class="alpha-banner">⚠️ ALPHA BUILD — Feedback Dashboard</div>
+<nav class="navbar scrolled"><div class="nav-container">
+  <a href="/" class="nav-logo"><span class="logo-shield">🛡</span><span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span><span class="alpha-badge">ALPHA</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/" class="nav-link">Home</a></li>
+    <li><a href="/detect" class="nav-link">Detect Media</a></li>
+    <li><a href="/news" class="nav-link">Fake News</a></li>
+    <li><a href="/feedback" class="nav-link active">📊 Feedback</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+</div></nav>
+
+<main class="page-main"><div class="container">
+  <div class="page-header">
+    <h1>📊 Feedback & Accuracy Dashboard</h1>
+    <p>Track how well the AI model performs based on manual labels from testers</p>
+  </div>
+
+  <div class="accuracy-hero">
+    <div class="accuracy-big">{% if stats.total > 0 %}{{ stats.accuracy }}%{% else %}—{% endif %}</div>
+    <p style="color:rgba(255,255,255,0.5)">Model Accuracy ({{ stats.total }} labels)</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="num">{{ stats.total }}</div><div class="lbl">Total Labels</div></div>
+    <div class="stat-card"><div class="num" style="color:#22c55e">{{ stats.correct }}</div><div class="lbl">AI Correct ✅</div></div>
+    <div class="stat-card"><div class="num" style="color:#ef4444">{{ stats.incorrect }}</div><div class="lbl">AI Wrong ❌</div></div>
+    <div class="stat-card"><div class="num">{% if stats.total > 0 %}{{ stats.accuracy }}%{% else %}—{% endif %}</div><div class="lbl">Accuracy</div></div>
+  </div>
+
+  {% if stats.by_type %}
+  <div class="panel">
+    <h3 style="margin-top:0">Accuracy by Content Type</h3>
+    <div class="type-breakdown">
+      {% for type_name, type_stats in stats.by_type.items() %}
+      <div class="type-row">
+        <span class="type-name">{{ type_name }}</span>
+        <div class="type-bar"><div class="type-fill" style="width:{{ type_stats.accuracy }}%"></div></div>
+        <span class="type-pct">{{ type_stats.accuracy }}%</span>
+        <span style="color:rgba(255,255,255,0.4);font-size:0.8rem">({{ type_stats.total }} labels)</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="panel">
+    <h3 style="margin-top:0">Recent Feedback Labels</h3>
+    {% if feedback %}
+    <div style="overflow-x:auto">
+    <table class="fb-table">
+      <thead><tr>
+        <th>Time</th><th>Type</th><th>Content</th><th>AI Said</th><th>Human Label</th><th>Result</th><th>Tester</th>
+      </tr></thead>
+      <tbody>
+      {% for f in feedback %}
+      <tr>
+        <td>{{ f.timestamp[:16] }}</td>
+        <td>{{ f.content_type }}</td>
+        <td title="{{ f.filename }}">{{ f.filename[:40] }}{% if f.filename|length > 40 %}…{% endif %}</td>
+        <td><span class="{{ 'badge-fake' if f.ai_verdict == 'FAKE' else 'badge-real' }}">{{ f.ai_verdict }}</span></td>
+        <td><span class="{{ 'badge-fake' if f.human_label == 'FAKE' else 'badge-real' }}">{{ f.human_label }}</span></td>
+        <td><span class="{{ 'badge-correct' if f.is_correct else 'badge-incorrect' }}">{{ '✅ Correct' if f.is_correct else '❌ Wrong' }}</span></td>
+        <td>{{ f.tester_name }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    {% else %}
+    <p style="color:rgba(255,255,255,0.4);text-align:center;padding:40px">No feedback labels yet. Go to <a href="/detect" style="color:#6366f1">Detect</a> or <a href="/news" style="color:#6366f1">News</a> to test and label.</p>
+    {% endif %}
+  </div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
+    <a href="/api/feedback/export" class="btn btn-primary export-btn" target="_blank">📥 Export Feedback JSON</a>
+    <a href="/detect" class="btn btn-ghost export-btn">🎭 Test Media</a>
+    <a href="/news" class="btn btn-ghost export-btn">📰 Test News</a>
+  </div>
+</div></main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body></html>

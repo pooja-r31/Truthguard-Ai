@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Detect Deepfakes — TruthGuard AI</title>
+  <meta name="description" content="Upload images or videos to detect deepfakes and manipulated media with TruthGuard AI."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body class="page-body">
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="/" class="nav-logo">
+      <span class="logo-shield">🛡</span>
+      <span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+      <li><a href="/detect" class="nav-link active">Detect</a></li>
+      <li><a href="/news" class="nav-link">Fake News</a></li>
+      <li><a href="/verify" class="nav-link">ID Verify</a></li>
+      <li><a href="/consent" class="nav-link">Consent</a></li>
+      <li><a href="/report" class="nav-link">Reports</a></li>
+    </ul>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="container">
+    <div class="page-header">
+      <h1>🎭 Deepfake &amp; Media Detection</h1>
+      <p>Upload an image/video or provide a URL to analyze for AI-generated or manipulated content</p>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tabFile" onclick="switchTab('file')">📁 Upload File</button>
+      <button class="tab-btn" id="tabUrl" onclick="switchTab('url')">🔗 Analyze URL</button>
+    </div>
+
+    <!-- Upload panel -->
+    <div class="panel" id="panelFile">
+      <div class="upload-zone" id="dropZone" onclick="document.getElementById('mediaInput').click()"
+           ondragover="event.preventDefault();this.classList.add('drag-active')"
+           ondragleave="this.classList.remove('drag-active')"
+           ondrop="handleDrop(event)">
+        <div class="upload-icon">📤</div>
+        <p class="upload-title">Drop your file here or click to browse</p>
+        <p class="upload-hint">Supports: JPG, PNG, GIF, WebP, MP4, AVI, MOV (max 32 MB)</p>
+        <input type="file" id="mediaInput" accept="image/*,video/*" style="display:none" onchange="fileSelected(this)"/>
+      </div>
+      <div class="preview-box" id="previewBox" style="display:none">
+        <img id="previewImg" src="" alt="Preview" style="max-height:220px;border-radius:12px;"/>
+        <p id="previewName" class="preview-name"></p>
+      </div>
+      <button class="btn btn-primary btn-wide" id="analyzeFileBtn" onclick="analyzeFile()" style="display:none">
+        🔍 Analyze File
+      </button>
+    </div>
+
+    <!-- URL panel -->
+    <div class="panel" id="panelUrl" style="display:none">
+      <div class="input-group">
+        <label class="input-label">Media URL</label>
+        <input type="url" id="urlInput" class="text-input" placeholder="https://example.com/image.jpg"/>
+      </div>
+      <button class="btn btn-primary" onclick="analyzeUrl()">🔍 Analyze URL</button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-box" id="loadingBox" style="display:none">
+      <div class="spinner"></div>
+      <p>AI forensic analysis in progress…</p>
+    </div>
+
+    <!-- Result -->
+    <div class="result-card" id="resultCard" style="display:none">
+      <div class="result-header" id="resultHeader">
+        <div class="verdict-badge" id="verdictBadge"></div>
+        <div class="confidence-bar-wrap">
+          <span class="conf-label">Confidence</span>
+          <div class="confidence-bar">
+            <div class="confidence-fill" id="confidenceFill"></div>
+          </div>
+          <span class="conf-value" id="confValue"></span>
+        </div>
+      </div>
+      <p class="result-explanation" id="resultExplanation"></p>
+      <div class="signals-grid" id="signalsGrid"></div>
+      <div class="recs-box" id="recsBox"></div>
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  let selectedFile = null;
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panelFile').style.display = tab === 'file' ? 'block' : 'none';
+    document.getElementById('panelUrl').style.display  = tab === 'url'  ? 'block' : 'none';
+    document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  }
+
+  function fileSelected(input) {
+    selectedFile = input.files[0];
+    if (!selectedFile) return;
+    document.getElementById('previewName').textContent = selectedFile.name;
+    if (selectedFile.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('previewImg').src = e.target.result;
+        document.getElementById('previewBox').style.display = 'block';
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      document.getElementById('previewBox').style.display = 'block';
+      document.getElementById('previewImg').style.display = 'none';
+    }
+    document.getElementById('analyzeFileBtn').style.display = 'block';
+    document.getElementById('dropZone').style.display = 'none';
+  }
+
+  function handleDrop(event) {
+    event.preventDefault();
+    document.getElementById('dropZone').classList.remove('drag-active');
+    const dt = event.dataTransfer;
+    if (dt.files.length) {
+      document.getElementById('mediaInput').files = dt.files;
+      fileSelected(document.getElementById('mediaInput'));
+    }
+  }
+
+  async function analyzeFile() {
+    if (!selectedFile) return;
+    showLoading();
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    try {
+      const res = await fetch('/api/detect/media', { method: 'POST', body: formData });
+      const data = await res.json();
+      showResult(data);
+    } catch(e) { showError(e.message); }
+  }
+
+  async function analyzeUrl() {
+    const url = document.getElementById('urlInput').value.trim();
+    if (!url) { alert('Please enter a URL'); return; }
+    showLoading();
+    try {
+      const res = await fetch('/api/detect/url', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ url }),
+      });
+      const data = await res.json();
+      showResult(data);
+    } catch(e) { showError(e.message); }
+  }
+
+  function showLoading() {
+    document.getElementById('loadingBox').style.display = 'flex';
+    document.getElementById('resultCard').style.display = 'none';
+  }
+
+  function showResult(data) {
+    document.getElementById('loadingBox').style.display = 'none';
+    const card = document.getElementById('resultCard');
+    const isFake = data.result === 'FAKE';
+
+    card.className = 'result-card ' + (isFake ? 'result-fake' : 'result-real');
+    document.getElementById('verdictBadge').innerHTML =
+      `<span class="verdict-icon">${isFake ? '⚠️' : '✅'}</span>
+       <span class="verdict-text">${isFake ? 'DEEPFAKE DETECTED' : 'AUTHENTIC'}</span>`;
+
+    const fill = document.getElementById('confidenceFill');
+    fill.style.width = data.confidence + '%';
+    fill.className   = 'confidence-fill ' + (isFake ? 'fill-fake' : 'fill-real');
+    document.getElementById('confValue').textContent = data.confidence + '%';
+
+    document.getElementById('resultExplanation').textContent =
+      data.details?.explanation || '';
+
+    // Signals
+    const signals = data.details?.signals || {};
+    const grid = document.getElementById('signalsGrid');
+    grid.innerHTML = Object.entries(signals).map(([k, v]) => `
+      <div class="signal-chip ${v.score > 0.5 ? 'signal-high' : 'signal-low'}">
+        <span class="signal-name">${k.replace(/_/g,' ')}</span>
+        <span class="signal-score">${(v.score * 100).toFixed(1)}%</span>
+      </div>`).join('');
+
+    // Recs
+    const recs = data.details?.recommendations || [];
+    document.getElementById('recsBox').innerHTML = recs.length
+      ? '<h4>Recommendations</h4><ul>' + recs.map(r=>`<li>${r}</li>`).join('') + '</ul>'
+      : '';
+
+    card.style.display = 'block';
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showError(msg) {
+    document.getElementById('loadingBox').style.display = 'none';
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('resultCard').className = 'result-card result-error';
+    document.getElementById('verdictBadge').innerHTML = `<span>❌ Error: ${msg}</span>`;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Dashboard — TruthGuard AI</title>
+  <meta name="description" content="Real-time analytics dashboard for TruthGuard AI deepfake and misinformation detection."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body class="page-body">
+
+<nav class="navbar scrolled">
+  <div class="nav-container">
+    <a href="/" class="nav-logo"><span class="logo-shield">🛡</span><span class="logo-text">TruthGuard <span class="brand-ai">AI</span></span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li><a href="/dashboard" class="nav-link active">Dashboard</a></li>
+      <li><a href="/detect" class="nav-link">Detect</a></li>
+      <li><a href="/news" class="nav-link">Fake News</a></li>
+      <li><a href="/verify" class="nav-link">ID Verify</a></li>
+      <li><a href="/consent" class="nav-link">Consent</a></li>
+      <li><a href="/report" class="nav-link">Reports</a></li>
+    </ul>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="container">
+    <div class="page-header">
+      <h1>📊 Analytics Dashboard</h1>
+      <p>Real-time TruthGuard AI system overview</p>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-icon">🔍</div>
+        <div class="kpi-value" id="kpiTotal">{{ stats.total_scans }}</div>
+        <div class="kpi-label">Total Scans</div>
+      </div>
+      <div class="kpi-card kpi-warning">
+        <div class="kpi-icon">⚠️</div>
+        <div class="kpi-value" id="kpiFakes">{{ stats.deepfakes_found }}</div>
+        <div class="kpi-label">Deepfakes Found</div>
+      </div>
+      <div class="kpi-card kpi-danger">
+        <div class="kpi-icon">📰</div>
+        <div class="kpi-value" id="kpiNews">{{ stats.fake_news_found }}</div>
+        <div class="kpi-label">Fake News Flagged</div>
+      </div>
+      <div class="kpi-card kpi-success">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-value" id="kpiUsers">{{ stats.users_verified }}</div>
+        <div class="kpi-label">Users Verified</div>
+      </div>
+      <div class="kpi-card kpi-info">
+        <div class="kpi-icon">🎯</div>
+        <div class="kpi-value">94.7%</div>
+        <div class="kpi-label">Detection Accuracy</div>
+      </div>
+    </div>
+
+    <!-- Charts placeholder -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Scan Activity (Last 7 Days)</h3>
+        <canvas id="activityChart" width="400" height="200"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Detection Breakdown</h3>
+        <canvas id="breakdownChart" width="300" height="200"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent scans table -->
+    <div class="panel" style="margin-top:2rem">
+      <h3 class="panel-title">Recent Scans</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Type</th><th>Content</th><th>Result</th><th>Confidence</th><th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for scan in history %}
+            <tr>
+              <td><code class="monospace">{{ scan.id }}</code></td>
+              <td><span class="type-badge type-{{ scan.type }}">{{ scan.type }}</span></td>
+              <td class="truncate">{{ scan.filename[:45] if scan.filename else '—' }}</td>
+              <td><span class="status-badge status-{{ scan.result.lower() if scan.result else 'unknown' }}">{{ scan.result or '—' }}</span></td>
+              <td>
+                <div class="mini-bar">
+                  <div class="mini-fill {{ 'fill-fake' if scan.result == 'FAKE' else 'fill-real' }}"
+                       style="width:{{ scan.confidence or 0 }}%"></div>
+                </div>
+                {{ scan.confidence or 0 }}%
+              </td>
+              <td class="timestamp">{{ scan.timestamp[:19].replace('T',' ') if scan.timestamp else '—' }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="empty-cell">No scans yet. <a href="/detect">Analyze your first file →</a></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+  // Refresh stats every 30s
+  setInterval(async () => {
+    const res  = await fetch('/api/stats');
+    const data = await res.json();
+    document.getElementById('kpiTotal').textContent = data.total_scans;
+    document.getElementById('kpiFakes').textContent = data.fake_detected;
+    document.getElementById('kpiUsers').textContent = data.users_verified;
+  }, 30000);
+
+  // Draw simple charts
+  drawActivityChart('activityChart');
+  drawBreakdownChart('breakdownChart',
+    {{ stats.deepfakes_found }},
+    {{ stats.fake_news_found }},
+    {{ [stats.total_scans - stats.deepfakes_found - stats.fake_news_found, 0]|max }}
+  );
+</script>
+</body>
+</html>

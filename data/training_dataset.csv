@@ -1,0 +1,111 @@
+id,type,label,source,headline,text_snippet,confidence,features_sensationalism,features_credibility,features_misinfo_keywords,features_sentiment_polarity,features_writing_quality,features_image_noise,features_exif_anomaly,features_frequency_artifact,creation_method,verified_by,date_added
+1,news,FAKE,unknown_blog,"SHOCKING: 5G towers secretly spreading COVID-19!","Scientists confirm that 5G radiation activates the COVID virus inside your body. Share before this gets deleted!",0.97,0.95,0.02,0.98,0.85,0.30,,,,"manual","team_alpha",2024-01-05
+2,news,REAL,bbc_news,"WHO confirms seasonal flu vaccines remain effective","The World Health Organization has published updated guidelines confirming this season's influenza vaccines provide strong protection.",0.96,0.05,0.92,0.01,0.20,0.88,,,,"manual","team_beta",2024-01-06
+3,image,FAKE,social_media_upload,"","",,0.10,0.05,0.02,,,0.92,0.87,0.91,"deepfakelab_v2","auto_cnn",2024-01-07
+4,image,REAL,news_agency,"","",,0.04,0.03,0.01,,,0.05,0.06,0.04,"original_camera","auto_cnn",2024-01-07
+5,news,FAKE,conspiracy_site,"Doctors HATE this one weird trick that cures cancer overnight","Big pharma conspiracy exposed. They've been hiding the miracle cure for decades!",0.94,0.93,0.01,0.96,0.90,0.25,,,,"manual","team_alpha",2024-01-08
+6,news,REAL,reuters,"Federal Reserve raises interest rates by 0.25 basis points","The Federal Reserve announced Wednesday a quarter-point interest rate increase citing persistent inflation data from Q3.",0.98,0.03,0.94,0.00,0.15,0.90,,,,"manual","team_beta",2024-01-09
+7,image,FAKE,deepfake_site,"","",,0.08,0.06,0.03,,,0.94,0.91,0.90,"stable_diffusion","auto_cnn",2024-01-10
+8,image,REAL,verified_user,"","",,0.05,0.04,0.01,,,0.06,0.05,0.05,"canon_eos_r5","manual",2024-01-10
+9,news,FAKE,fake_news_network,"Vaccines cause autism — Harvard study confirms!","A bombshell study from Harvard scientists proves without doubt that childhood vaccines are directly linked to autism spectrum disorder.",0.95,0.85,0.12,0.97,0.78,0.35,,,,"manual","team_gamma",2024-01-11
+10,news,REAL,ap_news,"SpaceX successfully launches 60 Starlink satellites into orbit","SpaceX's Falcon 9 rocket deployed another batch of Starlink broadband satellites early Thursday from Cape Canaveral.",0.97,0.04,0.90,0.00,0.10,0.91,,,,"manual","team_beta",2024-01-12
+11,image,FAKE,social_media,"","",,0.12,0.07,0.05,,,0.89,0.85,0.88,"midjourney_v6","auto_cnn",2024-01-13
+12,image,REAL,news_wire,"","",,0.03,0.02,0.01,,,0.04,0.05,0.03,"nikon_z9","manual",2024-01-13
+13,news,FAKE,blog_spam,"BREAKING: Government puts microchips in COVID vaccines!","Leaked documents show that nano-microchips were manufactured into mRNA vaccines to track and control the population.",0.96,0.92,0.02,0.98,0.88,0.28,,,,"manual","team_alpha",2024-01-14
+14,news,REAL,nyt,"Supreme Court agrees to hear landmark abortion case","The US Supreme Court said Friday it would take up a challenge to abortion medication regulations raising questions about federal authority.",0.98,0.04,0.95,0.01,0.12,0.89,,,,"manual","team_delta",2024-01-15
+15,image,FAKE,generated_portal,"","",,0.09,0.08,0.04,,,0.93,0.88,0.92,"dalle3","auto_cnn",2024-01-16
+16,image,REAL,press_photo,"","",,0.02,0.01,0.00,,,0.03,0.04,0.02,"sony_a1","manual",2024-01-16
+17,news,FAKE,misinformation_site,"Moon landing was STAGED by NASA — proof finally released","Secret footage emerges proving Stanley Kubrick directed the Apollo 11 moon landing in a Hollywood studio.",0.93,0.90,0.03,0.97,0.82,0.32,,,,"manual","team_gamma",2024-01-17
+18,news,REAL,guardian,"UK government announces record NHS funding for 2025-26","Chancellor unveiled a £10bn increase in NHS spending as part of the autumn budget announcement in Parliament.",0.97,0.03,0.93,0.00,0.08,0.92,,,,"manual","team_beta",2024-01-18
+19,image,FAKE,ai_generator,"","",,0.11,0.05,0.06,,,0.91,0.86,0.89,"gan_face_generator","auto_cnn",2024-01-19
+20,image,REAL,journalism_org,"","",,0.04,0.03,0.02,,,0.05,0.05,0.04,"leica_m11","manual",2024-01-19
+21,news,FAKE,tabloid_extreme,"Lizard people control global banking system — whistleblower reveals","A brave insider from the World Bank has come forward to reveal the shocking truth about reptilian elites.",0.95,0.91,0.01,0.99,0.87,0.27,,,,"manual","team_alpha",2024-01-20
+22,news,REAL,cnn,"Scientists develop new Alzheimer's blood test with 90% accuracy","Researchers at University College London published results of a simple blood test that can detect Alzheimer's disease up to 15 years before symptoms appear.",0.98,0.06,0.91,0.00,0.05,0.90,,,,"manual","team_delta",2024-01-21
+23,image,FAKE,deepfake_portal,"","",,0.10,0.07,0.03,,,0.95,0.92,0.93,"faceswap_v3","auto_cnn",2024-01-22
+24,image,REAL,photo_bank,"","",,0.03,0.02,0.01,,,0.04,0.03,0.02,"fujifilm_gfx100","manual",2024-01-22
+25,news,FAKE,viral_hoax,"Flat Earth finally proven by Navy pilot who flew off the edge","Lieutenant James Parker reveals how he accidentally flew past the Antarctic ice wall and saw the true edge of our flat world.",0.96,0.89,0.02,0.98,0.84,0.30,,,,"manual","team_gamma",2024-01-23
+26,news,REAL,nature_journal,"CRISPR gene editing shown to cure sickle cell disease in trial","Peer-reviewed results from a phase 3 clinical trial published in Nature Medicine show CRISPR therapy achieved a 97.1% response rate.",0.99,0.02,0.98,0.00,0.10,0.95,,,,"manual","team_beta",2024-01-24
+27,image,FAKE,synthetic_media,"","",,0.08,0.06,0.04,,,0.90,0.87,0.91,"stable_diffusion_xl","auto_cnn",2024-01-25
+28,image,REAL,wire_service,"","",,0.03,0.03,0.01,,,0.03,0.04,0.03,"hasselblad_x2d","manual",2024-01-25
+29,news,FAKE,propaganda_blog,"George Soros secretly funding Antifa to destroy America","Leaked bank records show billionaire philanthropist George Soros transferred $50 billion to revolutionary Antifa cells globally.",0.94,0.88,0.04,0.97,0.86,0.29,,,,"manual","team_alpha",2024-01-26
+30,news,REAL,washington_post,"Senate passes bipartisan infrastructure bill 68-32","The infrastructure legislation, which includes $550 billion in new spending on roads, bridges, and broadband, now heads to the House.",0.98,0.04,0.93,0.00,0.12,0.91,,,,"manual","team_delta",2024-01-27
+31,image,FAKE,ai_face_site,"","",,0.09,0.08,0.05,,,0.92,0.90,0.94,"this_person_does_not_exist","auto_cnn",2024-01-28
+32,image,REAL,verified_press,"","",,0.04,0.03,0.01,,,0.05,0.05,0.04,"pentax_645z","manual",2024-01-28
+33,news,FAKE,health_hoax,"Drinking bleach kills coronavirus — urgent health alert","A viral social media post claims diluted bleach solution eliminates COVID-19 safely — doctors warn this is dangerous misinformation.",0.97,0.90,0.01,0.99,0.89,0.26,,,,"manual","team_gamma",2024-01-29
+34,news,REAL,npr,"NASA's Artemis mission plans first lunar landing since 1972","NASA Administrator confirmed the agency remains on schedule for a crewed lunar landing mission targeting the Moon's south pole.",0.97,0.05,0.92,0.00,0.08,0.90,,,,"manual","team_beta",2024-01-30
+35,image,FAKE,manipulated_upload,"","",,0.13,0.06,0.05,,,0.88,0.85,0.87,"photoshop_deepfake","auto_cnn",2024-01-31
+36,image,REAL,news_agency_2,"","",,0.04,0.02,0.01,,,0.04,0.03,0.02,"nikon_d850","manual",2024-01-31
+37,news,FAKE,shock_blog,"THEY'RE KILLING US! 5G towers activated near schools nationwide","Parents are furious after discovering invisible radiation towers installed secretly near every primary school in the country!",0.96,0.97,0.01,0.98,0.91,0.22,,,,"manual","team_alpha",2024-02-01
+38,news,REAL,economist,"IMF projects 3.2% global GDP growth for 2025","The International Monetary Fund's World Economic Outlook forecast modest economic expansion driven by emerging markets.",0.98,0.02,0.95,0.00,0.10,0.93,,,,"manual","team_delta",2024-02-02
+39,image,FAKE,content_farm,"","",,0.11,0.07,0.04,,,0.91,0.88,0.90,"controlnet_v11","auto_cnn",2024-02-03
+40,image,REAL,media_partner,"","",,0.03,0.04,0.01,,,0.04,0.04,0.03,"olympus_om1","manual",2024-02-03
+41,news,FAKE,anti_vax_forum,"15 children died IMMEDIATELY after MMR vaccine — mums speak out","Heartbroken mothers share devastating stories of children collapsing within minutes of receiving the MMR jab.",0.95,0.88,0.05,0.96,0.85,0.31,,,,"manual","team_gamma",2024-02-04
+42,news,REAL,lancet,"New antibiotic effective against drug-resistant superbugs","A study in The Lancet reports that cefiderocol demonstrated bactericidal activity against 92% of carbapenem-resistant organisms in phase 2b trials.",0.99,0.03,0.97,0.00,0.07,0.94,,,,"manual","team_beta",2024-02-05
+43,image,FAKE,deepfake_influencer,"","",,0.10,0.06,0.05,,,0.93,0.91,0.92,"roop_facecloner","auto_cnn",2024-02-06
+44,image,REAL,editorial_photo,"","",,0.03,0.02,0.01,,,0.03,0.04,0.02,"canon_5d_mark_iv","manual",2024-02-06
+45,news,FAKE,clickbait_news,"You won't BELIEVE what they found in tap water — urgent warning","Scientists discover terrifying substance in municipal water supplies that causes memory loss and is being covered up by authorities.",0.93,0.94,0.02,0.97,0.87,0.27,,,,"manual","team_alpha",2024-02-07
+46,news,REAL,abc_news,"Amazon announces Kuiper satellite broadband service commercial launch","Amazon Web Services confirmed the Kuiper broadband constellation will begin commercial beta service in Q4 2025.",0.97,0.04,0.91,0.00,0.09,0.90,,,,"manual","team_delta",2024-02-08
+47,image,FAKE,synthetic_video,"","",,0.09,0.07,0.06,,,0.94,0.93,0.95,"vid2vid_deepfake","auto_cnn",2024-02-09
+48,image,REAL,stock_photo_auth,"","",,0.04,0.03,0.01,,,0.05,0.05,0.03,"sigma_fp_l","manual",2024-02-09
+49,news,FAKE,extremist_page,"Deep state plans to arrest all gun owners by 2025 — leaked docs","Classified government memos reveal a secret operation to disarm American citizens and impose martial law before the election.",0.96,0.92,0.02,0.98,0.89,0.25,,,,"manual","team_gamma",2024-02-10
+50,news,REAL,nature_climate,"Arctic sea ice reaches record low extent in September 2024","NSIDC data confirms Arctic sea ice minimum extent fell to 3.74 million km² in September, the lowest since satellite records began.",0.98,0.04,0.96,0.00,0.06,0.93,,,,"manual","team_beta",2024-02-11
+51,image,FAKE,text2img_tool,"","",,0.08,0.05,0.04,,,0.90,0.86,0.89,"firefly_adobe","auto_cnn",2024-02-12
+52,image,REAL,photojournalism,"","",,0.04,0.03,0.02,,,0.04,0.04,0.03,"leica_sl3","manual",2024-02-12
+53,news,FAKE,spam_portal,"Secret cancer cure discovered — big pharma paying billions to hide it","An oncologist was fired after discovering that a common household spice can cure all forms of cancer within 30 days.",0.94,0.90,0.03,0.99,0.88,0.29,,,,"manual","team_alpha",2024-02-13
+54,news,REAL,cdc_gov,"CDC updates flu vaccination guidelines for 2024-25 season","The Centers for Disease Control and Prevention recommends annual influenza vaccination for everyone 6 months and older.",0.99,0.01,0.98,0.00,0.04,0.95,,,,"manual","team_delta",2024-02-14
+55,image,FAKE,gan_output,"","",,0.12,0.06,0.05,,,0.92,0.89,0.91,"stylegan3","auto_cnn",2024-02-15
+56,image,REAL,verified_news_photo,"","",,0.03,0.03,0.01,,,0.03,0.04,0.02,"sony_alpha_7rv","manual",2024-02-15
+57,news,FAKE,bot_network,"BREAKING NEWS: President secretly signed martial law order!","Multiple sources confirm the president quietly signed an executive order enabling military enforcement in all 50 states next month.",0.96,0.96,0.03,0.97,0.91,0.24,,,,"manual","team_gamma",2024-02-16
+58,news,REAL,bbc_science,"Scientists map complete human genome for the first time","Researchers from the Telomere-to-Telomere consortium have sequenced the entire human genome with no gaps for the first time.",0.99,0.05,0.97,0.00,0.08,0.94,,,,"manual","team_beta",2024-02-17
+59,image,FAKE,video_manipulation,"","",,0.10,0.07,0.05,,,0.91,0.88,0.90,"deepfacelab_v3","auto_cnn",2024-02-18
+60,image,REAL,authenticated_photo,"","",,0.03,0.02,0.01,,,0.04,0.04,0.03,"nikon_z8","manual",2024-02-18
+61,news,FAKE,disinfosite,"Chemtrails proven to cause infertility — new study","A controversial study shows that chemical trails left by commercial aircraft are systematically depleting male fertility worldwide.",0.95,0.87,0.04,0.97,0.83,0.31,,,,"manual","team_alpha",2024-02-19
+62,news,REAL,who_int,"WHO declares end to mpox global health emergency","The World Health Organization's emergency committee has recommended ending the public health emergency of international concern for mpox.",0.98,0.03,0.96,0.00,0.07,0.93,,,,"manual","team_delta",2024-02-20
+63,image,FAKE,social_fake,"","",,0.09,0.08,0.06,,,0.90,0.87,0.89,"imagen3_google","auto_cnn",2024-02-21
+64,image,REAL,press_agency,"","",,0.03,0.03,0.01,,,0.04,0.04,0.02,"canon_r3","manual",2024-02-21
+65,news,FAKE,hoax_network,"Bill Gates admits to depopulation agenda in leaked interview","In a secret recording obtained by Truth Warriors, Bill Gates openly discusses plans to reduce the global population using vaccines.",0.97,0.91,0.01,0.99,0.90,0.26,,,,"manual","team_gamma",2024-02-22
+66,news,REAL,techcrunch,"OpenAI releases GPT-5 with multimodal reasoning capabilities","OpenAI's latest model achieves state-of-the-art results on 27 of 30 standard benchmarks, including math reasoning and coding tasks.",0.97,0.06,0.90,0.00,0.08,0.90,,,,"manual","team_beta",2024-02-23
+67,image,FAKE,ai_portal,"","",,0.11,0.05,0.04,,,0.93,0.91,0.93,"sora_openai","auto_cnn",2024-02-24
+68,image,REAL,certified_stock,"","",,0.03,0.02,0.01,,,0.03,0.03,0.02,"red_v_raptor","manual",2024-02-24
+69,news,FAKE,health_lie,"This will change everything: Drinking coffee cures diabetes forever","Groundbreaking research reveals that drinking 5 cups of black coffee daily permanently reverses type 2 diabetes in 30 days.",0.93,0.92,0.05,0.96,0.86,0.28,,,,"manual","team_alpha",2024-02-25
+70,news,REAL,harvard_medical,"Sleep deprivation linked to 48% increased dementia risk","A 25-year longitudinal study of 7,900 participants found persistent sleep under 6 hours per night significantly raised dementia probability.",0.99,0.04,0.97,0.00,0.06,0.95,,,,"manual","team_delta",2024-02-26
+71,image,FAKE,deepfake_politics,"","",,0.09,0.06,0.04,,,0.92,0.90,0.91,"facefusion_ai","auto_cnn",2024-02-27
+72,image,REAL,news_photo_archive,"","",,0.04,0.03,0.01,,,0.05,0.05,0.03,"pentax_k3_iii","manual",2024-02-27
+73,news,FAKE,conspiracy_daily,"The Illuminati controls all world currencies — exposed","Secret society documents leaked to a journalist reveal the Illuminati has manipulated every central bank on the planet since 1913.",0.96,0.90,0.02,0.98,0.88,0.27,,,,"manual","team_gamma",2024-02-28
+74,news,REAL,guardian_tech,"EU passes landmark AI Act establishing risk-based regulation","European Parliament approved the Artificial Intelligence Act, creating the world's first comprehensive legal framework for AI systems.",0.98,0.05,0.93,0.00,0.07,0.92,,,,"manual","team_beta",2024-02-29
+75,image,FAKE,viral_fake,"","",,0.10,0.07,0.05,,,0.90,0.87,0.88,"magnific_ai","auto_cnn",2024-03-01
+76,image,REAL,photo_verified,"","",,0.03,0.02,0.01,,,0.03,0.04,0.02,"phase_one_xt","manual",2024-03-01
+77,news,FAKE,scam_health,"Miracle water discovered in Himalayan springs cures HIV in weeks","Indigenous monks have kept secret the existence of miracle water that completely eliminates HIV antibodies from the bloodstream.",0.95,0.89,0.03,0.99,0.87,0.30,,,,"manual","team_alpha",2024-03-02
+78,news,REAL,nih_gov,"NIH funds $1.2B initiative to study long COVID mechanisms","The National Institutes of Health announced major funding for RECOVER initiative researchers studying post-acute sequelae of SARS-CoV-2.",0.99,0.02,0.97,0.00,0.05,0.94,,,,"manual","team_delta",2024-03-03
+79,image,FAKE,content_forgery,"","",,0.08,0.06,0.05,,,0.91,0.89,0.92,"lumiere_deepmotion","auto_cnn",2024-03-04
+80,image,REAL,media_house,"","",,0.03,0.03,0.01,,,0.04,0.04,0.03,"arri_alexa35","manual",2024-03-04
+81,news,FAKE,fear_mongering,"URGENT: Radiation from smart meters causes brain cancer — cover-up!","Leaked industry emails reveal that smart meter manufacturers have been hiding data showing 600% increased cancer risk.",0.96,0.93,0.02,0.98,0.90,0.24,,,,"manual","team_gamma",2024-03-05
+82,news,REAL,science_mag,"Antarctic ice shelf collapse accelerates sea-level projections","New measurements from CryoSat-2 satellite data show Thwaites Glacier losing ice three times faster than models predicted.",0.98,0.04,0.95,0.00,0.07,0.93,,,,"manual","team_beta",2024-03-06
+83,image,FAKE,synthetic_news,"","",,0.11,0.06,0.06,,,0.92,0.90,0.91,"runway_ml_gen2","auto_cnn",2024-03-07
+84,image,REAL,journalism_photo,"","",,0.04,0.03,0.02,,,0.04,0.04,0.03,"fujifilm_x_h2s","manual",2024-03-07
+85,news,FAKE,anti_science,"Scientists ADMIT climate change is a global hoax for profit","Leaked emails from the IPCC show scientists deliberately fabricated temperature data to secure research funding from globalist donors.",0.97,0.92,0.02,0.98,0.89,0.26,,,,"manual","team_alpha",2024-03-08
+86,news,REAL,nasa_gov,"James Webb Telescope detects earliest known galaxy at z=13.2","NASA confirmed that observation JADES-GS-z13-0 has been spectroscopically confirmed at redshift z=13.2 by the JWST NIRSpec instrument.",0.99,0.05,0.97,0.00,0.06,0.95,,,,"manual","team_delta",2024-03-09
+87,image,FAKE,political_deepfake,"","",,0.09,0.07,0.05,,,0.93,0.91,0.94,"deepfake_detector_bypass","auto_cnn",2024-03-10
+88,image,REAL,wire_photo,"","",,0.03,0.02,0.01,,,0.03,0.03,0.02,"canon_eos_1dx_iii","manual",2024-03-10
+89,news,FAKE,alternative_health,"HIV cured by prayer — confirmed by African medical conference","Over 2,000 HIV patients were healed through divine intervention at an evangelical conference in Lagos, according to organizers.",0.94,0.87,0.06,0.98,0.84,0.32,,,,"manual","team_gamma",2024-03-11
+90,news,REAL,bbc_tech,"UK bans TikTok from government devices over security concerns","British authorities have joined the US, EU, and Canada in restricting TikTok access on official government devices.",0.97,0.04,0.92,0.00,0.08,0.91,,,,"manual","team_beta",2024-03-12
+91,image,FAKE,ai_video,"","",,0.10,0.06,0.04,,,0.91,0.88,0.90,"kling_ai_video","auto_cnn",2024-03-13
+92,image,REAL,authenticated,"","",,0.03,0.03,0.01,,,0.04,0.05,0.03,"hasselblad_907x","manual",2024-03-13
+93,news,FAKE,disinfo_ring,"Election machines hacked by China — rigged ballot results EXPOSED","Cybersecurity whistleblower reveals that Dominion voting machines transmitted live ballot data to Chinese servers during the election.",0.97,0.94,0.01,0.98,0.91,0.23,,,,"manual","team_alpha",2024-03-14
+94,news,REAL,politico,"Senate Judiciary Committee approves immigration reform bill","The bipartisan bill passed 14-8 in committee and now proceeds to a full Senate floor vote scheduled for next month.",0.98,0.04,0.93,0.01,0.11,0.90,,,,"manual","team_delta",2024-03-15
+95,image,FAKE,manipulated_celebrity,"","",,0.12,0.07,0.06,,,0.94,0.93,0.95,"inswapper_face","auto_cnn",2024-03-16
+96,image,REAL,photo_journalist,"","",,0.03,0.02,0.01,,,0.03,0.04,0.02,"nikon_z9","manual",2024-03-16
+97,news,FAKE,misinfo_hub,"Wake up sheeple! Water fluoridation causes IQ reduction by 25 points","Harvard researchers confirm that fluoride added to tap water systematically reduces the intelligence of the population by design.",0.95,0.92,0.05,0.97,0.87,0.27,,,,"manual","team_gamma",2024-03-17
+98,news,REAL,who_int_2,"WHO updates global tuberculosis treatment guidelines","New drug regimens approved by WHO expert panels can cut TB treatment duration from 6 months to 4 months with equivalent outcomes.",0.99,0.02,0.97,0.00,0.05,0.94,,,,"manual","team_beta",2024-03-18
+99,image,FAKE,fake_evidence,"","",,0.09,0.07,0.05,,,0.90,0.87,0.89,"heygen_avatar","auto_cnn",2024-03-19
+100,image,REAL,certified_news_photo,"","",,0.04,0.03,0.01,,,0.04,0.04,0.03,"leica_q3","manual",2024-03-19
+101,news,FAKE,propaganda_net,"Global food shortage engineered by Davos elite — starvation plan revealed","The World Economic Forum wrote in a secret annex to their 2030 agenda that food shortages would be deliberately induced to reduce world population.",0.97,0.93,0.01,0.99,0.90,0.25,,,,"manual","team_alpha",2024-03-20
+102,news,REAL,ap_health,"Study links ultra-processed food to 10 increased disease risks","A comprehensive meta-analysis of 45 studies covering 9.9 million participants found ultra-processed food consumption associated with increased mortality.",0.99,0.04,0.96,0.00,0.06,0.93,,,,"manual","team_delta",2024-03-21
+103,image,FAKE,ai_headshot,"","",,0.11,0.05,0.04,,,0.92,0.89,0.91,"picso_face_gen","auto_cnn",2024-03-22
+104,image,REAL,editorial,"","",,0.03,0.02,0.01,,,0.03,0.03,0.02,"fujifilm_gfx50sii","manual",2024-03-22
+105,news,FAKE,health_scam,"Turmeric injection protocol cures all autoimmune diseases instantly","Naturopath practitioners are injecting concentrated turmeric extract intravenously achieving 100% cure rates for lupus and MS.",0.94,0.88,0.04,0.97,0.85,0.29,,,,"manual","team_gamma",2024-03-23
+106,news,REAL,mit_news,"MIT develops room-temperature superconductor with verified results","MIT researchers published reproducible methodology for achieving superconductivity at 22°C in a hydrogen-rich compound.",0.99,0.07,0.97,0.00,0.08,0.95,,,,"manual","team_beta",2024-03-24
+107,image,FAKE,synthetic_id,"","",,0.10,0.06,0.05,,,0.93,0.91,0.92,"d_id_avatar","auto_cnn",2024-03-25
+108,image,REAL,wire_service_2,"","",,0.03,0.03,0.01,,,0.04,0.04,0.03,"canon_r5_mark_ii","manual",2024-03-25
+109,news,FAKE,radicalsite,"Must see: Obama caught on camera admitting to treason!","Explosive footage surfaces of former US President Barack Obama confessing to planning a coup during a private dinner party.",0.97,0.95,0.01,0.98,0.92,0.22,,,,"manual","team_alpha",2024-03-26
+110,news,REAL,economist_tech,"Global chip shortage eases as TSMC expands Arizona capacity","Taiwan Semiconductor Manufacturing Company's first US fabrication plant reached full production capacity ahead of the Q2 target.",0.97,0.04,0.92,0.00,0.07,0.91,,,,"manual","team_delta",2024-03-27
